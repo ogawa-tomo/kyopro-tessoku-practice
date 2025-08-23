@@ -15,27 +15,37 @@ class Node:
         return self.parent.root()
 
 
+def is_same(node1: Node, node2: Node):
+    return node1.root() == node2.root()
+
+
+def unite(node1: Node, node2: Node):
+    root1 = node1.root()
+    root2 = node2.root()
+    if root1.size < root2.size:
+        root1.parent = root2
+        root2.size += root1.size
+    else:
+        root2.parent = root1
+        root1.size += root2.size
+
+
 N, Q = map(int, input().split())
 
 nodes = [Node() for _ in range(N)]
+
 for _ in range(Q):
     t, u, v = map(int, input().split())
     u -= 1
     v -= 1
-    root_u = nodes[u].root()
-    root_v = nodes[v].root()
+    node_u = nodes[u]
+    node_v = nodes[v]
     if t == 1:
-        if root_u == root_v:
+        if is_same(node_u, node_v):
             continue
-        if root_u.size < root_v.size:
-            root_u.parent = root_v
-            root_v.size += root_u.size
-        else:
-            root_v.parent = root_u
-            root_u.size += root_v.size
-
+        unite(node_u, node_v)
     elif t == 2:
-        if root_u == root_v:
+        if is_same(node_u, node_v):
             print("Yes")
         else:
             print("No")
