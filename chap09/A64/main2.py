@@ -35,6 +35,26 @@ class QueueObject:
         return str(self.distance)
 
 
+def dijkstra(start_node: Node):
+    q: list[QueueObject] = []
+    start_node.distance = 0
+
+    heapq.heappush(q, QueueObject(start_node))
+    while q:
+        queue_object = heapq.heappop(q)
+        node = queue_object.node
+
+        if node.finalized:
+            continue
+        node.finalized = True
+
+        for link in node.links:
+            distance = node.distance + link.distance
+            if distance < link.to_node.distance:
+                link.to_node.distance = distance
+                heapq.heappush(q, QueueObject(link.to_node))
+
+
 N, M = map(int, input().split())
 nodes: list[Node] = [Node() for _ in range(N)]
 
@@ -45,23 +65,7 @@ for _ in range(M):
     node1.links.append(Link(c, node2))
     node2.links.append(Link(c, node1))
 
-q: list[QueueObject] = []
-nodes[0].distance = 0
-
-heapq.heappush(q, QueueObject(nodes[0]))
-while q:
-    queue_object = heapq.heappop(q)
-    node = queue_object.node
-
-    if node.finalized:
-        continue
-    node.finalized = True
-
-    for link in node.links:
-        distance = node.distance + link.distance
-        if distance < link.to_node.distance:
-            link.to_node.distance = distance
-            heapq.heappush(q, QueueObject(link.to_node))
+dijkstra(nodes[0])
 
 for node in nodes:
     if node.distance == max_distance:
