@@ -24,7 +24,7 @@ d: deque[Node] = deque()
 
 d.append(nodes[0])
 nodes[0].distance = 0
-while len(d) > 0:
+while d:
     node = d.popleft()
     distance = node.distance
     for neighbor in node.neighbors:
