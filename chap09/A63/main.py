@@ -1,17 +1,15 @@
 from collections import deque
-from typing import Union
 
 
 class Node:
     def __init__(self) -> None:
         self.neighbors: list[Node] = []
-        self.distance = -1  # 頂点0からの距離
+        self.distance: int | None = None  # 頂点0からの距離
 
 
 N, M = map(int, input().split())
-nodes: list[Node] = []
-for _ in range(N):
-    nodes.append(Node())
+
+nodes = [Node() for _ in range(N)]
 
 for _ in range(M):
     a, b = map(int, input().split())
@@ -26,11 +24,16 @@ d.append(nodes[0])
 nodes[0].distance = 0
 while d:
     node = d.popleft()
+    if node.distance is None:
+        raise
     distance = node.distance
     for neighbor in node.neighbors:
-        if neighbor.distance == -1:
+        if neighbor.distance is None:
             d.append(neighbor)
             neighbor.distance = distance + 1
 
 for node in nodes:
-    print(node.distance)
+    if node.distance is None:
+        print(-1)
+    else:
+        print(node.distance)
