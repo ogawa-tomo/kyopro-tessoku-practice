@@ -1,7 +1,7 @@
 A, B = map(int, input().split())
 
 
-def GCD(A, B):
+def GCD(A: int, B: int):
 
     while A > 0 and B > 0:
         if A > B:
@@ -15,4 +15,8 @@ def GCD(A, B):
         return A
 
 
-print((A * int(B / GCD(A, B))))
+def LCM(A: int, B: int):
+    return A * int(B / GCD(A, B))
+
+
+print(LCM(A, B))
