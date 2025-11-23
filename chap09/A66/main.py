@@ -1,7 +1,7 @@
 from typing import Union
 import sys
 
-sys.setrecursionlimit(1000000)
+sys.setrecursionlimit(10**9)
 
 
 class Node:
@@ -9,19 +9,22 @@ class Node:
         self.parent: Union[None, Node] = None
         self.size = 1
 
+    @property
     def root(self):
         if self.parent is None:
             return self
-        return self.parent.root()
+        return self.parent.root
 
 
 def is_same(node1: Node, node2: Node):
-    return node1.root() == node2.root()
+    return node1.root == node2.root
 
 
 def unite(node1: Node, node2: Node):
-    root1 = node1.root()
-    root2 = node2.root()
+    root1 = node1.root
+    root2 = node2.root
+    if root1 == root2:
+        raise
     if root1.size < root2.size:
         root1.parent = root2
         root2.size += root1.size
