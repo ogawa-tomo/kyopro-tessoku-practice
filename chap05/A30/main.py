@@ -3,14 +3,18 @@ mod = 1000000007
 
 
 # a^bをmodで割った余りを返す
-def mod_power(a, b, mod):
+def repeatedSquare(num: int, pow: int, mod: int):
+    a = num
+    b = pow
     answer = 1
     while b > 0:
         # i回目のループで、bが2^iの成分を持っていれば、掛け算をする
         if b & 1:
-            answer = (answer * a) % mod
+            answer *= a
+            answer %= mod
         # i回目のループでは、a^(2^i)をかける（0回目: a^1, 1回目: a^2, 2回目: a^4, ...）
-        a = a * a % mod
+        a *= a
+        a %= mod
         b >>= 1
     return answer
 
@@ -24,6 +28,13 @@ def fact(a, mod):
     return answer
 
 
+#  modを法としてnumeratorをdenominatorで割る
+def fraction_mod(numerator: int, denominator: int, mod: int):
+    if denominator % mod == 0:
+        raise
+    return numerator * repeatedSquare(denominator, mod - 2, mod) % mod
+
+
 # nの階乗
 n_fact = fact(n, mod)
 
@@ -31,6 +42,6 @@ n_fact = fact(n, mod)
 r_fact = fact(r, mod)
 # n-rの階乗
 n_r_fact = fact(n - r, mod)
-bunshi = r_fact * n_r_fact % mod
+bunbo = r_fact * n_r_fact % mod
 
-print((n_fact * mod_power(bunshi, mod - 2, mod)) % mod)
+print((fraction_mod(n_fact, bunbo, mod)))
