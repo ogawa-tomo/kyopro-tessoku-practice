@@ -61,6 +61,8 @@ class SegmentTree:
         cell.min_value = value
         while cell.upper_cell is not None:
             cell = cell.upper_cell
+            if cell.lower_left_cell is None or cell.lower_right_cell is None:
+                raise
             cell.max_value = max(
                 cell.lower_left_cell.max_value, cell.lower_right_cell.max_value
             )
@@ -75,10 +77,7 @@ class SegmentTree:
         return self.min_or_max_value(start_index, end_index, min)
 
     def min_or_max_value(self, start_index: int, end_index: int, min_or_max: Callable):
-        if min_or_max == max:
-            inf = -sys.maxsize
-        elif min_or_max == min:
-            inf = sys.maxsize
+        inf = -sys.maxsize if min_or_max == max else sys.maxsize
 
         def query(start_index: int, end_index: int, cell: Cell):
             if end_index < cell.start_index or cell.end_index < start_index:
