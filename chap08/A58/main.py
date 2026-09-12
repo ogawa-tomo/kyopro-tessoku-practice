@@ -55,6 +55,9 @@ class SegmentTree:
     def find_cell(self, index: int):
         return self.cells[index + self.size - 1]
 
+    def value(self, index):
+        return self.find_cell(index).min_value
+
     def update(self, index: int, value: int):
         cell = self.find_cell(index)
         cell.max_value = value
