@@ -81,7 +81,7 @@ class SegmentTree:
 
         def query(start_index: int, end_index: int, cell: Cell):
             if end_index < cell.start_index or cell.end_index < start_index:
-                return -sys.maxsize
+                return inf
             if cell.start_index == start_index and end_index == cell.end_index:
                 if min_or_max == max:
                     return cell.max_value
