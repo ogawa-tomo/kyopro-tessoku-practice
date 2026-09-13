@@ -1,5 +1,4 @@
 import sys
-from typing import Callable
 
 
 class Cell:
@@ -77,85 +76,72 @@ class SegmentTree:
             )
 
     def max_value(self, start_index: int, end_index: int):
-        return self.min_or_max_value(start_index, end_index, max)
+        return self.query(start_index, end_index, self.cells[0], "max")
 
     def min_value(self, start_index: int, end_index: int):
-        return self.min_or_max_value(start_index, end_index, min)
-
-    def min_or_max_value(self, start_index: int, end_index: int, min_or_max: Callable):
-        inf = -sys.maxsize if min_or_max == max else sys.maxsize
-
-        def query(start_index: int, end_index: int, cell: Cell):
-            if end_index < cell.start_index or cell.end_index < start_index:
-                return inf
-            if cell.start_index == start_index and end_index == cell.end_index:
-                if min_or_max == max:
-                    return cell.max_value
-                elif min_or_max == min:
-                    return cell.min_value
-                else:
-                    raise
-            # 左下
-            if (
-                cell.lower_left_cell is not None
-                and start_index <= cell.lower_left_cell.end_index
-            ):
-                lower_left = query(
-                    start_index,
-                    min(cell.lower_left_cell.end_index, end_index),
-                    cell.lower_left_cell,
-                )
-            else:
-                lower_left = inf
-            # 右下
-            if (
-                cell.lower_right_cell is not None
-                and cell.lower_right_cell.start_index <= end_index
-            ):
-                lower_right = query(
-                    max(start_index, cell.lower_right_cell.start_index),
-                    end_index,
-                    cell.lower_right_cell,
-                )
-            else:
-                lower_right = inf
-            return min_or_max(lower_left, lower_right)
-
-        return query(start_index, end_index, self.cells[0])
+        return self.query(start_index, end_index, self.cells[0], "min")
 
     def sum_value(self, start_index: int, end_index: int):
-        def query(start_index: int, end_index: int, cell: Cell):
-            if end_index < cell.start_index or cell.end_index < start_index:
-                return 0
-            if cell.start_index == start_index and end_index == cell.end_index:
-                return cell.sum_value
-            # 左下
-            if (
-                cell.lower_left_cell is not None
-                and start_index <= cell.lower_left_cell.end_index
-            ):
-                lower_left = query(
-                    start_index,
-                    min(cell.lower_left_cell.end_index, end_index),
-                    cell.lower_left_cell,
-                )
-            else:
-                lower_left = 0
-            # 右下
-            if (
-                cell.lower_right_cell is not None
-                and cell.lower_right_cell.start_index <= end_index
-            ):
-                lower_right = query(
-                    max(start_index, cell.lower_right_cell.start_index),
-                    end_index,
-                    cell.lower_right_cell,
-                )
-            else:
-                lower_right = 0
-            return lower_left + lower_right
+        return self.query(start_index, end_index, self.cells[0], "sum")
 
-        return query(start_index, end_index, self.cells[0])
+    def query(self, start_index: int, end_index: int, cell: Cell, func: str) -> int:
+        match func:
+            case "max":
+                default_value = -sys.maxsize
+            case "min":
+                default_value = sys.maxsize
+            case "sum":
+                default_value = 0
+            case _:
+                raise
+
+        if end_index < cell.start_index or cell.end_index < start_index:
+            return default_value
+
+        if cell.start_index == start_index and end_index == cell.end_index:
+            match func:
+                case "max":
+                    return cell.max_value
+                case "min":
+                    return cell.min_value
+                case "sum":
+                    return cell.sum_value
+
+        # 左下
+        if (
+            cell.lower_left_cell is not None
+            and start_index <= cell.lower_left_cell.end_index
+        ):
+            lower_left = self.query(
+                start_index,
+                min(cell.lower_left_cell.end_index, end_index),
+                cell.lower_left_cell,
+                func,
+            )
+        else:
+            lower_left = default_value
+
+        # 右下
+        if (
+            cell.lower_right_cell is not None
+            and cell.lower_right_cell.start_index <= end_index
+        ):
+            lower_right = self.query(
+                max(start_index, cell.lower_right_cell.start_index),
+                end_index,
+                cell.lower_right_cell,
+                func,
+            )
+        else:
+            lower_right = default_value
+
+        match func:
+            case "max":
+                return max(lower_left, lower_right)
+            case "min":
+                return min(lower_left, lower_right)
+            case "sum":
+                return lower_left + lower_right
 
 
 N, Q = map(int, input().split())
