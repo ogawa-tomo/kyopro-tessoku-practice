@@ -3,8 +3,24 @@ from collections import deque
 
 class Node:
     def __init__(self) -> None:
-        self.neighbors: list[Node] = []
-        self.distance: int | None = None  # 頂点0からの距離
+        self.to_nodes: list[Node] = []
+        self.distance: int | None = None  # スタートからの距離
+
+
+def bfs(start_node: Node):
+    d: deque[Node] = deque()
+
+    d.append(start_node)
+    start_node.distance = 0
+    while d:
+        node = d.popleft()
+        if node.distance is None:
+            raise
+        distance = node.distance
+        for to_node in node.to_nodes:
+            if to_node.distance is None:
+                d.append(to_node)
+                to_node.distance = distance + 1
 
 
 N, M = map(int, input().split())
@@ -15,22 +31,10 @@ for _ in range(M):
     a, b = map(int, input().split())
     a -= 1
     b -= 1
-    nodes[a].neighbors.append(nodes[b])
-    nodes[b].neighbors.append(nodes[a])
+    nodes[a].to_nodes.append(nodes[b])
+    nodes[b].to_nodes.append(nodes[a])
 
-d: deque[Node] = deque()
-
-d.append(nodes[0])
-nodes[0].distance = 0
-while d:
-    node = d.popleft()
-    if node.distance is None:
-        raise
-    distance = node.distance
-    for neighbor in node.neighbors:
-        if neighbor.distance is None:
-            d.append(neighbor)
-            neighbor.distance = distance + 1
+bfs(nodes[0])
 
 for node in nodes:
     if node.distance is None:
