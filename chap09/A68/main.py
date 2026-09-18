@@ -30,16 +30,10 @@ class Link:
         return self.flow
 
 
-N, M = map(int, input().split())
-
-nodes = [Node() for _ in range(N)]
-for _ in range(M):
-    a, b, c = map(int, input().split())
-    node_a = nodes[a - 1]
-    node_b = nodes[b - 1]
-    link = Link(node_a, node_b, c)
-    node_a.to_links.append(link)
-    node_b.from_links.append(link)
+def add_link(from_node: Node, to_node: Node, flow: int):
+    link = Link(from_node, to_node, flow)
+    from_node.to_links.append(link)
+    to_node.from_links.append(link)
 
 
 def dfs(start: Node, goal: Node, flow: int):
@@ -73,6 +67,15 @@ def dfs(start: Node, goal: Node, flow: int):
 
     return 0
 
+
+N, M = map(int, input().split())
+
+nodes = [Node() for _ in range(N)]
+for _ in range(M):
+    a, b, c = map(int, input().split())
+    node_a = nodes[a - 1]
+    node_b = nodes[b - 1]
+    add_link(node_a, node_b, c)
 
 answer = 0
 while True:
