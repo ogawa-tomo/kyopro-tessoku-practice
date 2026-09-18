@@ -1,5 +1,3 @@
-# これだと、通らない。main2.pyで通る。
-
 import heapq
 import sys
 
@@ -12,9 +10,6 @@ class Node:
         self.links: list[Link] = []
         self.finalized = False
 
-    def __lt__(self, other):
-        return self.distance < other.distance
-
     def __repr__(self):
         return str(self.distance)
 
@@ -23,6 +18,41 @@ class Link:
     def __init__(self, distance: int, to_node: Node):
         self.distance = distance
         self.to_node = to_node
+
+
+# キューには同じノードが追加されることがある。
+# キューに追加済みのノードに対してdistanceを操作すると、キューが正常に動作しない。
+# したがって、キューに追加するための専用のクラスを用意する。
+class QueueObject:
+    def __init__(self, node: Node):
+        self.node = node
+        self.distance = node.distance
+
+    def __lt__(self, other):
+        return self.distance < other.distance
+
+    def __repr__(self):
+        return str(self.distance)
+
+
+def dijkstra(start_node: Node):
+    q: list[QueueObject] = []
+    start_node.distance = 0
+
+    heapq.heappush(q, QueueObject(start_node))
+    while q:
+        queue_object = heapq.heappop(q)
+        node = queue_object.node
+
+        if node.finalized:
+            continue
+        node.finalized = True
+
+        for link in node.links:
+            distance = node.distance + link.distance
+            if distance < link.to_node.distance:
+                link.to_node.distance = distance
+                heapq.heappush(q, QueueObject(link.to_node))
 
 
 N, M = map(int, input().split())
@@ -35,40 +65,7 @@ for _ in range(M):
     node1.links.append(Link(c, node2))
     node2.links.append(Link(c, node1))
 
-
-q: list[Node] = []
-nodes[0].distance = 0
-
-heapq.heappush(q, nodes[0])
-while q:
-    print(q)
-    node = heapq.heappop(q)
-    print("pop", node)
-
-    # ここをコメントアウトすると通る
-    if node.finalized:
-        continue
-    node.finalized = True
-
-    for link in node.links:
-        distance = node.distance + link.distance
-        if distance < link.to_node.distance:
-            link.to_node.distance = distance
-            # print("distance", distance)
-            heapq.heappush(q, link.to_node)
-            print("add", link.to_node)
-            # if distance == 28:
-            #     print("距離が28")
-            #     print("このときのq", q)
-            #     print("ここからpop", heapq.heappop(q))
-        # ここで、距離28のNodeをpushしているが、次のループでpopされたのは30であり、heapqがバグっているように見える
-        # [27, 32, 30, 40, 36, 37, 40, 42, 48, 37]
-        # pop 27
-        # add 28
-        # add 31
-        # [30, 32, 37, 40, 28, 37, 40, 42, 31, 28, 31]
-        # pop 30
-        # キュー内にすでに追加済みのNodeのdistanceも含めてイジってしまうからおかしなことになる
+dijkstra(nodes[0])
 
 for node in nodes:
     if node.distance == max_distance:
