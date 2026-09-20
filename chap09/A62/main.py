@@ -4,8 +4,6 @@ import sys
 # 再帰呼び出しの深さの上限を深くする
 sys.setrecursionlimit(10**9)  # 10^9が限界らしく、10^10にするとREになっちゃった
 
-N, M = map(int, input().split())
-
 
 class Node:
     def __init__(self) -> None:
@@ -19,6 +17,8 @@ def dfs(node: Node):
         if not to_node.visited:
             dfs(to_node)
 
+
+N, M = map(int, input().split())
 
 nodes: list[Node] = []
 for _ in range(N):
