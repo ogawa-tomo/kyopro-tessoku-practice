@@ -4,6 +4,7 @@ import sys
 sys.setrecursionlimit(10**9)
 
 
+# UnionFind
 class Node:
     def __init__(self) -> None:
         self.parent: Union[None, Node] = None
@@ -21,10 +22,10 @@ def is_same(node1: Node, node2: Node):
 
 
 def unite(node1: Node, node2: Node):
+    if is_same(node1, node2):
+        return
     root1 = node1.root
     root2 = node2.root
-    if root1 == root2:
-        raise
     if root1.size < root2.size:
         root1.parent = root2
         root2.size += root1.size
@@ -44,8 +45,6 @@ for _ in range(Q):
     node_u = nodes[u]
     node_v = nodes[v]
     if t == 1:
-        if is_same(node_u, node_v):
-            continue
         unite(node_u, node_v)
     elif t == 2:
         if is_same(node_u, node_v):
