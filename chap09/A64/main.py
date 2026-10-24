@@ -7,7 +7,7 @@ max_distance = sys.maxsize
 class Node:
     def __init__(self) -> None:
         self.distance = max_distance
-        self.links: list[Link] = []
+        self.to_links: list[Link] = []
         self.finalized = False
 
     def __repr__(self):
@@ -48,11 +48,12 @@ def dijkstra(start_node: Node):
             continue
         node.finalized = True
 
-        for link in node.links:
-            distance = node.distance + link.distance
-            if distance < link.to_node.distance:
-                link.to_node.distance = distance
-                heapq.heappush(q, QueueObject(link.to_node))
+        for to_link in node.to_links:
+            to_node = to_link.to_node
+            distance = node.distance + to_link.distance
+            if distance < to_node.distance:
+                to_node.distance = distance
+                heapq.heappush(q, QueueObject(to_node))
 
 
 N, M = map(int, input().split())
@@ -62,8 +63,8 @@ for _ in range(M):
     a, b, c = map(int, input().split())
     node1 = nodes[a - 1]
     node2 = nodes[b - 1]
-    node1.links.append(Link(c, node2))
-    node2.links.append(Link(c, node1))
+    node1.to_links.append(Link(c, node2))
+    node2.to_links.append(Link(c, node1))
 
 dijkstra(nodes[0])
 
