@@ -13,15 +13,18 @@ class Cell:
         self.lower_right_cell: Cell | None = None
         self.upper_cell: Cell | None = None
 
+    def __repr__(self) -> str:
+        return str((self.start_index, self.end_index))
+
 
 class SegmentTree:
     def __init__(self, init_list: list[int]):
+        self.length = len(init_list)
         self.cells: list[Cell] = []
         self.size = 1
         pow_num = 0
-        length = len(init_list)
         while True:
-            if 2**pow_num < length:
+            if 2**pow_num < self.length:
                 pow_num += 1
             else:
                 cells_length = 2**pow_num
@@ -42,11 +45,8 @@ class SegmentTree:
             if i > 0:
                 cell.upper_cell = self.cells[(i - 1) // 2]
 
-        for i in range(cells_length):
-            if i < length:
-                self.update(i, init_list[i])
-            else:
-                self.update(i, -sys.maxsize)
+        for i in range(self.length):
+            self.update(i, init_list[i])
 
     def __repr__(self):
         return str(self.cells)
@@ -58,6 +58,8 @@ class SegmentTree:
         return self.find_cell(index).min_value
 
     def update(self, index: int, value: int):
+        if index >= self.length:
+            raise
         cell = self.find_cell(index)
         cell.max_value = value
         cell.min_value = value
@@ -86,6 +88,9 @@ class SegmentTree:
         return self.query(start_index, end_index, self.cells[0], "sum")
 
     def query(self, start_index: int, end_index: int, cell: Cell, func: str) -> int:
+        if start_index < 0 or self.length <= end_index:
+            raise
+
         match func:
             case "max":
                 default_value = -sys.maxsize
