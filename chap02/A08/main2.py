@@ -1,6 +1,8 @@
 class CumulativeSum2D:
     def __init__(self, grids: list[list[int]]):
         self.grids = grids
+        self.height = len(grids)
+        self.width = len(grids[0])  # 正方形前提
         self.cum_sum_grids: list[list[int]] = []
         for i in range(len(grids)):
             row_cum_sum: list[int] = []
@@ -16,6 +18,15 @@ class CumulativeSum2D:
                 self.cum_sum_grids[i][j] += self.cum_sum_grids[i - 1][j]
 
     def range_sum(self, min_i, min_j, max_i, max_j):
+        if (
+            min_i < 0
+            or min_j < 0
+            or self.height <= max_i
+            or self.width <= max_j
+            or max_i < min_i
+            or max_j < min_j
+        ):
+            raise
         if min_i == 0 and min_j == 0:
             return self.cum_sum_grids[max_i][max_j]
         elif min_i == 0 and min_j > 0:

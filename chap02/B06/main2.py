@@ -1,6 +1,7 @@
 class CumulativeSum:
     def __init__(self, _list: list[int]):
         self._list = _list
+        self.length = len(_list)
         total = 0
         self.cumulative_sum_list: list[int] = []
         for elem in self._list:
@@ -13,6 +14,8 @@ class CumulativeSum:
         return self.cumulative_sum_list[index]
 
     def range_sum(self, left_index: int, right_index: int):
+        if left_index < 0 or self.length <= right_index or right_index < left_index:
+            raise
         return self.sum(right_index) - self.sum(left_index - 1)
 
 
