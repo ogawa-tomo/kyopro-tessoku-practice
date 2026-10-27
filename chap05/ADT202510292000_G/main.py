@@ -1,3 +1,6 @@
+import math
+
+
 N = int(input())
 
 
@@ -5,7 +8,7 @@ N = int(input())
 def sieve_of_eratosthenes(x: int):
     nums = [i for i in range(x + 1)]
 
-    root = int(pow(x, 0.5))
+    root = math.isqrt(x)
     for i in range(2, root + 1):
         if nums[i] != 0:
             for j in range(i, x + 1):
