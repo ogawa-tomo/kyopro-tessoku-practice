@@ -1,9 +1,6 @@
 import math
 
 
-N = int(input())
-
-
 # x以下の素数列挙
 def sieve_of_eratosthenes(x: int):
     nums = [i for i in range(x + 1)]
@@ -21,16 +18,7 @@ def sieve_of_eratosthenes(x: int):
     return primes
 
 
-primes = sieve_of_eratosthenes(1000000)
-answer = 0
-for i in range(len(primes)):
-    for j in range(i + 1, len(primes)):
-        p = primes[i]
-        q = primes[j]
-        n = p * q**3
-        if n > N:
-            break
-        # print(p, q)
-        answer += 1
+N = int(input())
 
-print(answer)
+for prime in sieve_of_eratosthenes(N):
+    print(prime)
