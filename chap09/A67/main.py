@@ -1,3 +1,4 @@
+# 最小全域木
 from typing import Union
 import sys
 
