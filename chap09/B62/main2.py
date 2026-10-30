@@ -8,9 +8,11 @@ sys.setrecursionlimit(10**9)  # 10^9が限界らしく、10^10にするとREに�
 class Node:
     def __init__(self, i) -> None:
         self.i = i
-        self.index = i + 1
         self.to_nodes: list[Node] = []
         self.visited = False
+
+    def __repr__(self) -> str:
+        return str(self.i + 1)
 
 
 N, M = map(int, input().split())
@@ -23,21 +25,21 @@ for _ in range(M):
     nodes[b].to_nodes.append(nodes[a])
 
 
-answer = []
+answer: list[Node] = []
+goal = nodes[N - 1]
 
 
 def dfs(node: Node):
-    if node.i == N - 1:
-        answer.append(node.index)
+    if node == goal:
+        answer.append(node)
         print(*answer)
         exit()
     node.visited = True
     for to_node in node.to_nodes:
         if not to_node.visited:
-            answer.append(node.index)
+            answer.append(node)
             dfs(to_node)
             answer.pop()
 
 
 dfs(nodes[0])
-print(*answer)
