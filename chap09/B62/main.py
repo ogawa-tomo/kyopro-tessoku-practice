@@ -15,6 +15,35 @@ class Node:
         return str(self.i + 1)
 
 
+class GetPath:
+    def __init__(self, nodes: list[Node], start: Node, goal: Node) -> None:
+        self.nodes = nodes
+        self.start = start
+        self.goal = goal
+        self.path: list[Node] = []
+
+    def dfs(self, node: Node):
+        node.visited = True
+        if node == self.goal:
+            self.path.append(node)
+            return True
+        for to_node in node.to_nodes:
+            if not to_node.visited and self.dfs(to_node):
+                self.path.append(node)
+                return True
+        return False
+
+    def get_path(self):
+        if self.dfs(self.start):
+            self.path.reverse()
+            return self.path
+
+
+def get_path(nodes: list[Node], start: Node, goal: Node):
+    gp = GetPath(nodes, start, goal)
+    return gp.get_path()
+
+
 N, M = map(int, input().split())
 nodes: list[Node] = [Node(i) for i in range(N)]
 for _ in range(M):
@@ -24,24 +53,7 @@ for _ in range(M):
     nodes[a].to_nodes.append(nodes[b])
     nodes[b].to_nodes.append(nodes[a])
 
-
-answer: list[Node] = []
-goal = nodes[N - 1]
-
-
-def dfs(node: Node):
-    if node == goal:
-        answer.append(node)
-        return True
-    node.visited = True
-    for to_node in node.to_nodes:
-        if not to_node.visited:
-            if dfs(to_node):
-                answer.append(node)
-                return True
-    return False
-
-
-dfs(nodes[0])
-answer.reverse()
-print(*answer)
+path = get_path(nodes, nodes[0], nodes[N - 1])
+if path is not None:
+    print(*path)
+# この問題ではpathは必ず存在する前提
