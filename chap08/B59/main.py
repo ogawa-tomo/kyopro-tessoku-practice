@@ -1,4 +1,3 @@
-# CpythonだとTLEでPyPyだとAC
 import sys
 
 
@@ -66,17 +65,13 @@ class SegmentTree:
         cell.sum_value = value
         while cell.upper_cell is not None:
             cell = cell.upper_cell
-            if cell.lower_left_cell is None or cell.lower_right_cell is None:
+            lower_left_cell = cell.lower_left_cell
+            lower_right_cell = cell.lower_right_cell
+            if lower_left_cell is None or lower_right_cell is None:
                 raise
-            cell.max_value = max(
-                cell.lower_left_cell.max_value, cell.lower_right_cell.max_value
-            )
-            cell.min_value = min(
-                cell.lower_left_cell.min_value, cell.lower_right_cell.min_value
-            )
-            cell.sum_value = (
-                cell.lower_left_cell.sum_value + cell.lower_right_cell.sum_value
-            )
+            cell.max_value = max(lower_left_cell.max_value, lower_right_cell.max_value)
+            cell.min_value = min(lower_left_cell.min_value, lower_right_cell.min_value)
+            cell.sum_value = lower_left_cell.sum_value + lower_right_cell.sum_value
 
     def max_value(self, start_index: int, end_index: int):
         return self.query(start_index, end_index, self.cells[0], "max")
@@ -114,28 +109,24 @@ class SegmentTree:
                     return cell.sum_value
 
         # 左下
-        if (
-            cell.lower_left_cell is not None
-            and start_index <= cell.lower_left_cell.end_index
-        ):
+        lower_left_cell = cell.lower_left_cell
+        if lower_left_cell is not None and start_index <= lower_left_cell.end_index:
             lower_left = self.query(
                 start_index,
-                min(cell.lower_left_cell.end_index, end_index),
-                cell.lower_left_cell,
+                min(lower_left_cell.end_index, end_index),
+                lower_left_cell,
                 func,
             )
         else:
             lower_left = default_value
 
         # 右下
-        if (
-            cell.lower_right_cell is not None
-            and cell.lower_right_cell.start_index <= end_index
-        ):
+        lower_right_cell = cell.lower_right_cell
+        if lower_right_cell is not None and lower_right_cell.start_index <= end_index:
             lower_right = self.query(
-                max(start_index, cell.lower_right_cell.start_index),
+                max(start_index, lower_right_cell.start_index),
                 end_index,
-                cell.lower_right_cell,
+                lower_right_cell,
                 func,
             )
         else:
