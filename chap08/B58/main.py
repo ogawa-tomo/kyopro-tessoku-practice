@@ -73,13 +73,13 @@ class SegmentTree:
             cell.min_value = min(lower_left_cell.min_value, lower_right_cell.min_value)
             cell.sum_value = lower_left_cell.sum_value + lower_right_cell.sum_value
 
-    def max_value(self, start_index: int, end_index: int):
+    def range_max(self, start_index: int, end_index: int):
         return self.query(start_index, end_index, self.cells[0], "max")
 
-    def min_value(self, start_index: int, end_index: int):
+    def range_min(self, start_index: int, end_index: int):
         return self.query(start_index, end_index, self.cells[0], "min")
 
-    def sum_value(self, start_index: int, end_index: int):
+    def range_sum(self, start_index: int, end_index: int):
         return self.query(start_index, end_index, self.cells[0], "sum")
 
     def query(self, start_index: int, end_index: int, cell: Cell, func: str) -> int:
@@ -177,7 +177,7 @@ tree = SegmentTree(dp)
 for i in range(1, N):
     left = get_smallest_index_more_than_or_equal(X[i] - R)
     right = get_largest_index_less_than_or_equal(X[i] - L)
-    min_step = tree.min_value(left, right)
+    min_step = tree.range_min(left, right)
     tree.update(i, min_step + 1)
 
 print(tree.value(N - 1))
