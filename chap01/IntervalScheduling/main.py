@@ -7,6 +7,20 @@ class Interval:
         self.right = right
 
 
+# 区間スケジューリング
+def interval_scheduling(intervals: list[Interval]):
+    intervals.sort(key=lambda i: i.right)
+
+    count = 0
+    prev: Interval | None = None
+    for interval in intervals:
+        if prev is None or prev.right < interval.left:
+            prev = interval
+            count += 1
+
+    return count
+
+
 N = int(input())
 
 intervals: list[Interval] = []
@@ -15,13 +29,5 @@ for _ in range(N):
     interval = Interval(a, b)
     intervals.append(interval)
 
-intervals.sort(key=lambda i: i.right)
-
-answer = 0
-prev: Interval | None = None
-for interval in intervals:
-    if prev is None or prev.right < interval.left:
-        prev = interval
-        answer += 1
-
+answer = interval_scheduling(intervals)
 print(answer)
